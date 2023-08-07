@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Audio Player</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    h1 {
+      margin-top: 50px;
+    }
+
+    input[type="text"] {
+      width: 400px;
+      padding: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #ff0000;
+      color: #ffffff;
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    #loopStatus {
+      margin-left: 10px;
+    }
+
+    #audioPlayer {
+      margin-top: 30px;
+      width: 300px;
+    }
+  </style>
+</head>
+<body>
+    <h1>Audio Player</h1>
+    <input type="text" id="videoSearch" placeholder="Enter song name">
+    <button onclick="searchVideo()">Search and Play</button>
+    <br>
+    <div id="statusMessage">Status: No song playing</div>
+    <br>
+    <audio id="audioPlayer" controls></audio>
+    <button onclick="toggleLoop()">Toggle Loop</button>
+    <span id="loopStatus">Loop: OFF</span>
+    
+    <script>
+      let audioElement = document.getElementById('audioPlayer');
+      let loop = false;
+    
+      function setStatusMessage(message) {
+        document.getElementById('statusMessage').innerText = `Status: ${message}`;
+      }
+
+      function searchVideo() {
+        const searchTerm = document.getElementById('videoSearch').value;
+        setStatusMessage('Preparing song to play');
+
+        fetch(`/search?q=${encodeURIComponent(searchTerm)}`)
+          .then((response) => response.json())
+          .then((data) => {
+            audioElement.src = data.audioURL;
+            audioElement.play();
+            setStatusMessage(`Currently playing: ${searchTerm}`);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            setStatusMessage('Failed to play song');
+          });
+      }
+    
+      function toggleLoop() {
+        loop = !loop;
+        audioElement.loop = loop;
+        document.getElementById('loopStatus').innerText = `Loop: ${loop ? 'ON' : 'OFF'}`;
+      }
+    </script>
+    <footer>by Techinfinities</footer>
+</body>
+</html>
